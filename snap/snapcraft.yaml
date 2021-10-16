@@ -1,0 +1,68 @@
+# snapcraft.yaml - builds a Snap package of Apache NetBeans IDE
+# Copyright 2021 John Neffenger
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: mynetbeans
+title: My NetBeans
+summary: Apache NetBeans IDE for the OpenJDK Snap
+description: |
+  This package contains the Apache NetBeans IDE and uses the OpenJDK
+  Snap package, if installed, when the JAVA_HOME environment variable
+  is not set. Building this package downloads the NetBeans Binaries ZIP
+  file directly from the Apache Web site (https://downloads.apache.org)
+  and verifies its SHA512 hash value before extracting the contents.
+
+  For more information, see the repository for this package on GitHub:
+
+  https://github.com/jgneff/mynetbeans
+
+version: '12.5'
+license: Apache-2.0
+
+base: core18
+grade: stable
+confinement: classic
+
+architectures:
+- build-on: amd64
+  run-on: all
+
+apps:
+  mynetbeans:
+    command: bin/netbeans.sh
+
+parts:
+  bin:
+    plugin: dump
+    source: .
+    source-type: local
+    stage: [bin]
+
+  netbeans:
+    plugin: dump
+    source: https://downloads.apache.org/netbeans/netbeans/${SNAPCRAFT_PROJECT_VERSION}/netbeans-${SNAPCRAFT_PROJECT_VERSION}-bin.zip
+    source-type: zip
+    source-checksum: sha512/3186f6281c7008d8a3aa2ca7df2b291c1c72b4bb82cd38ebf744c33fd477ed38b8cb859740ed27bb8c498ff3f59354a70627a6f16b775207b5cd2813ebeaa7fc
+    build-attributes: [no-patchelf]
+    build-packages: [git]
+    # Could not get the following 'netbeans' command options to work:
+    #   --userdir $SNAP_USER_DATA
+    #   --cachedir $SNAP_USER_COMMON/$SNAP_REVISION
+    # The following scriptlet applies a patch instead.
+    override-build: |
+      snapcraftctl build
+      cd "$SNAPCRAFT_PART_INSTALL" || exit
+      for p in "$SNAPCRAFT_PROJECT_DIR"/snap/local/*.patch; do
+          git apply "$p"
+      done
