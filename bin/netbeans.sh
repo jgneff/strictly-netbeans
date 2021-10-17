@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # netbeans.sh - starts the Apache NetBeans IDE
 # Copyright 2021 John Neffenger
 #
@@ -15,16 +15,18 @@
 # limitations under the License.
 
 # Location of the JDK in the OpenJDK Snap package
-jdkhome=$SNAP/../../openjdk/current/jdk
+snapjdk=$SNAP/../../openjdk/current/jdk
 
-# Uses the OpenJDK Snap, if installed, when JAVA_HOME is not set
-if [ ! -v JAVA_HOME ] && [ -d "$jdkhome" ]; then
-    JAVA_HOME=$jdkhome
+# Builds the NetBeans command using shell positional parameters
+set -- "$SNAP/netbeans/bin/netbeans"
+set -- "$@" --userdir "$SNAP_USER_DATA" --cachedir "$SNAP_USER_COMMON"
+
+# Uses JAVA_HOME if set; otherwise, OpenJDK Snap if installed
+if [ -n "$JAVA_HOME" ]; then
+    set -- "$@" --jdkhome "$JAVA_HOME"
+elif [ -d "$snapjdk" ]; then
+    set -- "$@" --jdkhome "$snapjdk"
 fi
 
-# Starts the NetBeans IDE
-if [ -v JAVA_HOME ]; then
-    "$SNAP/netbeans/bin/netbeans" --jdkhome "$JAVA_HOME"
-else
-    "$SNAP/netbeans/bin/netbeans"
-fi
+# Starts NetBeans
+"$@"
