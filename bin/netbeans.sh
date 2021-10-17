@@ -17,9 +17,13 @@
 # Location of the JDK in the OpenJDK Snap package
 snapjdk=$SNAP/../../openjdk/current/jdk
 
+# NetBeans data locations
+userdir=$SNAP_USER_DATA/$SNAP_VERSION
+cachedir=$SNAP_USER_COMMON/$SNAP_VERSION
+
 # Builds the NetBeans command using shell positional parameters
 set -- "$SNAP/netbeans/bin/netbeans"
-set -- "$@" --userdir "$SNAP_USER_DATA" --cachedir "$SNAP_USER_COMMON"
+set -- "$@" --userdir "$userdir" --cachedir "$cachedir"
 
 # Uses JAVA_HOME if set; otherwise, OpenJDK Snap if installed
 if [ -n "$JAVA_HOME" ]; then
