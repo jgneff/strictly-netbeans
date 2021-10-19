@@ -54,13 +54,12 @@ parts:
   bin:
     plugin: dump
     source: .
-    source-type: local
     stage: [bin]
 
   netbeans:
     plugin: nil
+
     source: https://downloads.apache.org/netbeans/netbeans/${SNAPCRAFT_PROJECT_VERSION}/netbeans-${SNAPCRAFT_PROJECT_VERSION}-source.zip
-    source-type: zip
     source-checksum: sha512/80d868bc10851e81a6607a9ebde2f8a3f32b0bc88d90b29987a97e821975e0f3017a4d949a5443c2f8d9ca4483bf9ede48ed089a81e954b6e11c0d2a300db9bc
     build-attributes: [no-patchelf]
     build-packages:
@@ -77,3 +76,4 @@ parts:
       for p in "$SNAPCRAFT_PROJECT_DIR"/snap/local/*.patch; do
           git apply "$p"
       done
+    stage: [-netbeans/*.built]
