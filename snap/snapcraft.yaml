@@ -65,12 +65,13 @@ parts:
     - default-jdk-headless
     - ant
     - git
-    # Fixes the location in the Confirm Import Settings dialog:
-    #   Settings created by a previous version of the IDE were found
-    #   on your system at ~/.netbeans/12.4. Do you want to import them?
     override-build: |
       ant -quiet
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
+
+      # Fixes the location in the Confirm Import Settings dialog:
+      # Settings created by a previous version of the IDE were found
+      # on your system at ~/.netbeans/12.4. Do you want to import them?
       cd "$SNAPCRAFT_PART_INSTALL" || exit
       for p in "$SNAPCRAFT_PROJECT_DIR"/snap/local/*.patch; do
           git apply "$p"
