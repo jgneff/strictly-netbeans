@@ -22,11 +22,11 @@ description: |
   HTML5, Groovy, C, and C++. Applications based on NetBeans, including
   the NetBeans IDE, can be extended by third party developers.
 
-  This package provides the NetBeans IDE for Linux and uses the OpenJDK
-  Snap package, if installed, when the JAVA_HOME environment variable
-  is not set. Building this package downloads the NetBeans source code
+  This package provides NetBeans for Linux and uses the OpenJDK Snap
+  package, if installed, when the JAVA_HOME environment variable is
+  not set. Building this package downloads the NetBeans source code
   directly from the Apache Web site, verifies its SHA-512 hash value,
-  and builds NetBeans from source.
+  and builds NetBeans from source using the Ubuntu Ant package.
 
   For more information, see the repository for this package on GitHub:
 
@@ -61,19 +61,30 @@ parts:
     source: https://downloads.apache.org/netbeans/netbeans/${SNAPCRAFT_PROJECT_VERSION}/netbeans-${SNAPCRAFT_PROJECT_VERSION}-source.zip
     source-checksum: sha512/80d868bc10851e81a6607a9ebde2f8a3f32b0bc88d90b29987a97e821975e0f3017a4d949a5443c2f8d9ca4483bf9ede48ed089a81e954b6e11c0d2a300db9bc
     build-attributes: [no-patchelf]
-    build-packages:
-    - default-jdk-headless
-    - ant
-    - git
+    build-packages: [default-jdk-headless, ant]
     override-build: |
+      # Gets the host and port from a proxy URL
+      #   $1 = the proxy URL, such as "http://10.10.10.1:8222/"
+      getproxy () {
+          host=$(echo "$1" | sed -E 's|https?://([^:/]*):?[0-9]*/?|\1|')
+          port=$(echo "$1" | sed -E 's|https?://[^:/]*:?([0-9]*)/?|\1|')
+      }
+
+      # Sets Java networking properties when using a proxy server
+      if [ -n "${http_proxy:-}" ]; then
+          getproxy "$http_proxy"
+          http="-Dhttp.proxyHost=$host -Dhttp.proxyPort=$port"
+      fi
+      if [ -n "${https_proxy:-}" ]; then
+          getproxy "$https_proxy"
+          https="-Dhttps.proxyHost=$host -Dhttps.proxyPort=$port"
+      fi
+
+      # Builds NetBeans
+      export ANT_OPTS="$http $https"
       ant -quiet
+      rm -f nbbuild/netbeans/*.built
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
 
-      # Fixes the location in the Confirm Import Settings dialog:
-      # Settings created by a previous version of the IDE were found
-      # on your system at ~/.netbeans/12.4. Do you want to import them?
-      cd "$SNAPCRAFT_PART_INSTALL" || exit
-      for p in "$SNAPCRAFT_PROJECT_DIR"/snap/local/*.patch; do
-          git apply "$p"
-      done
-    stage: [-netbeans/*.built]
+      # Prints Ant diagnostics report
+      ant -diagnostics
