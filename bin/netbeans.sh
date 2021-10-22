@@ -14,17 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# NetBeans startup script
-startup=$SNAP/netbeans/bin/netbeans
+# Starts NetBeans
+netbeans () {
+    "$SNAP/netbeans/bin/netbeans" "$@"
+}
 
 # Location of the JDK in the OpenJDK Snap package
 snapjdk=$SNAP/../../openjdk/current/jdk
 
 # Uses JAVA_HOME if set; otherwise, OpenJDK Snap if installed
 if [ -n "$JAVA_HOME" ]; then
-    $startup --jdkhome "$JAVA_HOME" "$@"
+    netbeans --jdkhome "$JAVA_HOME" "$@"
 elif [ -d "$snapjdk" ]; then
-    $startup --jdkhome "$snapjdk" "$@"
+    netbeans --jdkhome "$snapjdk" "$@"
 else
-    $startup "$@"
+    netbeans "$@"
 fi
