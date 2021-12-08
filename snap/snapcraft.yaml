@@ -35,7 +35,7 @@ description: |
   Java and OpenJDK are trademarks or registered trademarks of Oracle
   and/or its affiliates.
 
-version: '12.5'
+version: '12.6'
 license: Apache-2.0
 
 base: core18
@@ -59,7 +59,7 @@ parts:
   netbeans:
     plugin: nil
     source: https://downloads.apache.org/netbeans/netbeans/${SNAPCRAFT_PROJECT_VERSION}/netbeans-${SNAPCRAFT_PROJECT_VERSION}-source.zip
-    source-checksum: sha512/80d868bc10851e81a6607a9ebde2f8a3f32b0bc88d90b29987a97e821975e0f3017a4d949a5443c2f8d9ca4483bf9ede48ed089a81e954b6e11c0d2a300db9bc
+    source-checksum: sha512/2e8064c603ea134df00984a1ac7221ddb0b91e1175a04f11b26e59a39530418499634b28cd64174a5a946f7237479fbb01ce09253fca354aed1fe56052b55edf
     build-attributes: [no-patchelf]
     build-packages: [ant, default-jdk-headless]
     override-build: |
