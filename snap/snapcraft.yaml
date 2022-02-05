@@ -35,10 +35,10 @@ description: |
   Java and OpenJDK are trademarks or registered trademarks of Oracle
   and/or its affiliates.
 
-version: '13-rc1'
+version: '13-rc'
 license: Apache-2.0
 
-base: core18
+base: core20
 grade: stable
 confinement: classic
 
@@ -59,10 +59,11 @@ parts:
   netbeans:
     plugin: nil
     source: https://github.com/apache/netbeans.git
-    source-tag: $SNAPCRAFT_PROJECT_VERSION
+    source-branch: release130
     source-depth: 1
     build-attributes: [no-patchelf]
-    build-packages: [ant, default-jdk-headless]
+    build-packages: [default-jdk-headless]
+    build-snaps: [ant]
     override-build: |
       # Gets the host and port from a proxy URL
       #   $1 = the proxy URL, such as "http://10.10.10.1:8222/"
@@ -72,6 +73,7 @@ parts:
       }
 
       # Sets Java networking properties when using a proxy server
+      proxies=""
       if [ -n "${http_proxy:-}" ]; then
           getproxy "$http_proxy"
           proxies="-Dhttp.proxyHost=$host -Dhttp.proxyPort=$port"
@@ -85,6 +87,7 @@ parts:
       export ANT_OPTS="$proxies"
       ant -quiet
       rm -f nbbuild/netbeans/*.built
+      chmod 644 nbbuild/netbeans/etc/netbeans.conf
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
 
       # Prints Ant diagnostics report

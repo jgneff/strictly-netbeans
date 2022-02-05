@@ -15,10 +15,10 @@
 
 [Desktop Entry]
 Type=Application
-Name=My Apache NetBeans 12.6
+Name=My Apache NetBeans 13-rc
 Comment=Apache NetBeans, The Smarter Way to Code
 Icon=${SNAP}/meta/gui/mynetbeans.png
 Exec=mynetbeans %F
 Terminal=false
 Categories=Development;IDE;
-StartupWMClass=Apache NetBeans IDE 12.6
+StartupWMClass=Apache NetBeans IDE 13-rc
