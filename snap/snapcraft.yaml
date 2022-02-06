@@ -87,7 +87,7 @@ parts:
       export ANT_OPTS="$proxies"
       ant -quiet
       rm -f nbbuild/netbeans/*.built
-      chmod 644 nbbuild/netbeans/etc/netbeans.conf
+      chmod a+r nbbuild/netbeans/etc/netbeans.conf
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
 
       # Prints Ant diagnostics report
