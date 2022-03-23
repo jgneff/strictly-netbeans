@@ -61,11 +61,15 @@ parts:
     plugin: nil
     source: https://github.com/apache/netbeans.git
     source-type: git
-    source-branch: release130
+    source-tag: $SNAPCRAFT_PROJECT_VERSION
     source-depth: 1
     build-attributes: [no-patchelf]
     build-packages: [default-jdk-headless]
     build-snaps: [ant]
+    # See this file for the branch names and commits of each release:
+    # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
+    build-environment:
+    - RELEASE_BRANCH: release130
     override-build: |
       # Gets the host and port from a proxy URL
       #   $1 = the proxy URL, such as "http://10.10.10.1:8222/"
@@ -87,7 +91,7 @@ parts:
 
       # Builds NetBeans
       export ANT_OPTS="$proxies"
-      ant -quiet
+      ant -Dmetabuild.branch="$RELEASE_BRANCH" -quiet
       rm -f nbbuild/netbeans/*.built
       chmod a+r nbbuild/netbeans/etc/netbeans.conf
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
