@@ -1,9 +1,9 @@
-[Apache NetBeans][netbeans] is an integrated development environment (IDE) for Java, with extensions for other languages like PHP, JavaScript, HTML5, Groovy, C, and C++. Applications based on NetBeans, including the NetBeans IDE, can be extended by third party developers.
+[Apache NetBeans][netbeans] is an integrated development environment (IDE) for Java, with extensions for other languages like PHP, C, C++, HTML5, and JavaScript. Applications based on NetBeans, including the NetBeans IDE, can be extended by third-party developers.
 
-This package provides NetBeans for Linux and uses the [OpenJDK Snap package][openjdk], if installed, when the `JAVA_HOME` environment variable is not set. Building this package downloads the NetBeans source code directly from the [Apache Web site][source], verifies its SHA-512 hash value, and builds NetBeans from source using the Ubuntu Ant package.
+This package provides the latest release of NetBeans built directly from its [source code][source] on GitHub. If the [OpenJDK Snap package][openjdk] is also installed, this package connects to it during installation for the location of its Java Development Kit runtime and tools.
 
-Java and OpenJDK are trademarks or registered trademarks of Oracle and/or its affiliates.
+Apache NetBeans and the NetBeans logo are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries.
 
-[netbeans]: https://netbeans.apache.org/
+[netbeans]: https://netbeans.apache.org
+[source]: https://github.com/apache/netbeans
 [openjdk]: https://snapcraft.io/openjdk
-[source]: https://downloads.apache.org/netbeans/netbeans/

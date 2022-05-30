@@ -18,83 +18,75 @@ title: My NetBeans
 summary: Apache NetBeans IDE for the OpenJDK Snap
 description: |
   Apache NetBeans is an integrated development environment (IDE)
-  for Java, with extensions for other languages like PHP, JavaScript,
-  HTML5, Groovy, C, and C++. Applications based on NetBeans, including
-  the NetBeans IDE, can be extended by third party developers.
+  for Java, with extensions for other languages like PHP, C, C++,
+  HTML5, and JavaScript. Applications based on NetBeans, including
+  the NetBeans IDE, can be extended by third-party developers.
 
-  This package provides NetBeans for Linux and uses the OpenJDK Snap
-  package, if installed, when the JAVA_HOME environment variable is
-  not set. Building this package downloads the NetBeans source code
-  directly from the Apache Web site, verifies its SHA-512 hash value,
-  and builds NetBeans from source using the Ubuntu Ant package.
+  This package provides the latest release of NetBeans built directly
+  from its source code on GitHub. If the OpenJDK Snap package is also
+  installed, this package connects to it during installation for the
+  location of its Java Development Kit runtime and tools.
 
   For more information, see the repository for this package on GitHub:
 
   https://github.com/jgneff/mynetbeans
 
-  Java and OpenJDK are trademarks or registered trademarks of Oracle
-  and/or its affiliates.
+  This is a convenience binary of the Apache NetBeans IDE and not a
+  release by the Apache Software Foundation. Official releases are at:
+
+  https://netbeans.apache.org
+
+  Apache NetBeans and the NetBeans logo are either registered
+  trademarks or trademarks of the Apache Software Foundation in the
+  United States and/or other countries.
 
 version: '13'
 license: Apache-2.0
 
-base: core20
+base: core18
 grade: stable
-confinement: classic
+confinement: strict
 
 architectures:
 - build-on: amd64
   run-on: all
 
+plugs:
+  jdk-18-1804:
+    interface: content
+    target: $SNAP/jdk
+
 apps:
   mynetbeans:
     command: bin/netbeans.sh
+    extensions: [gnome-3-34]
+    plugs: [home, network, network-bind]
 
 parts:
-  bin:
+  dump:
     plugin: dump
     source: .
     source-type: local
-    stage: [bin]
+    stage: [bin, conf]
 
   netbeans:
     plugin: nil
     source: https://github.com/apache/netbeans.git
     source-type: git
-    source-tag: $SNAPCRAFT_PROJECT_VERSION
+    source-branch: release130
     source-depth: 1
-    build-attributes: [no-patchelf]
-    build-packages: [default-jdk-headless]
-    build-snaps: [ant]
+    build-packages: [ant, default-jdk-headless]
     # See this file for the branch names and commits of each release:
     # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
     build-environment:
     - RELEASE_BRANCH: release130
     override-build: |
-      # Gets the host and port from a proxy URL
-      #   $1 = the proxy URL, such as "http://10.10.10.1:8222/"
-      getproxy () {
-          host=$(echo "$1" | sed -E 's|https?://([^:/]*):?[0-9]*/?|\1|')
-          port=$(echo "$1" | sed -E 's|https?://[^:/]*:?([0-9]*)/?|\1|')
-      }
-
-      # Sets Java networking properties when using a proxy server
-      proxies=""
-      if [ -n "${http_proxy:-}" ]; then
-          getproxy "$http_proxy"
-          proxies="-Dhttp.proxyHost=$host -Dhttp.proxyPort=$port"
-      fi
-      if [ -n "${https_proxy:-}" ]; then
-          getproxy "$https_proxy"
-          proxies="$proxies -Dhttps.proxyHost=$host -Dhttps.proxyPort=$port"
-      fi
-
-      # Builds NetBeans
-      export ANT_OPTS="$proxies"
       ant -Dmetabuild.branch="$RELEASE_BRANCH" -quiet
       rm -f nbbuild/netbeans/*.built
       chmod a+r nbbuild/netbeans/etc/netbeans.conf
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
 
-      # Prints Ant diagnostics report
-      ant -diagnostics
+layout:
+  # For Fontconfig warnings and errors on startup
+  /etc/fonts:
+    bind: $SNAP/gnome-platform/etc/fonts
