@@ -1,5 +1,5 @@
-# mynetbeans.desktop - desktop entry file for the Apache NetBeans IDE
-# Copyright 2021 John Neffenger
+# strictly-netbeans.desktop - desktop file for the Apache NetBeans IDE
+# Copyright 2021-2022 John Neffenger
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 
 [Desktop Entry]
 Type=Application
-Name=My Apache NetBeans
-Comment=Apache NetBeans, The Smarter Way to Code
-Icon=${SNAP}/meta/gui/mynetbeans.png
-Exec=mynetbeans %F
+Name=Strictly NetBeans
+Comment=Apache NetBeans in a strictly-confined snap
+Icon=${SNAP}/meta/gui/strictly-netbeans.png
+Exec=strictly-netbeans %F
 Terminal=false
 Categories=Development;IDE;
 StartupWMClass=Apache NetBeans IDE
