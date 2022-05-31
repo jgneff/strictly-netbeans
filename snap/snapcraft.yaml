@@ -83,10 +83,14 @@ parts:
     build-environment:
     - RELEASE_BRANCH: release140
     override-build: |
-      ant -Dmetabuild.branch="$RELEASE_BRANCH" -quiet
-      rm -f nbbuild/netbeans/*.built
-      chmod a+r nbbuild/netbeans/etc/netbeans.conf
+      ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH"
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
+    stage:
+    # Excludes conditional files created by Ant target 'build-one-cluster'
+    - -netbeans/*.built
+    # Includes JavaFX Implementation for Linux, excluded by official builds
+    # - -netbeans/extra
+    # - -netbeans/moduleCluster.properties
 
 layout:
   # For Fontconfig warnings and errors on startup
