@@ -1,14 +1,14 @@
 [Apache NetBeans](https://netbeans.apache.org) is an integrated development environment (IDE) for Java, with extensions for PHP, C, C++, HTML5, JavaScript, and other languages. Applications based on NetBeans, including the NetBeans IDE, can be extended by third-party developers.
 
-This repository creates the [Strictly NetBeans Snap package](https://snapcraft.io/strictly-netbeans), which provides the latest release of NetBeans built directly from its [source code](https://github.com/apache/netbeans) on GitHub. If the [OpenJDK Snap package](https://snapcraft.io/openjdk) is also installed, this package connects to it during installation for the location of its Java Development Kit runtime and tools.
+This repository creates the [Strictly NetBeans Snap package](https://snapcraft.io/strictly-netbeans), which provides the latest release of NetBeans built directly from its [source code](https://github.com/apache/netbeans) on GitHub. If the [OpenJDK Snap package](https://snapcraft.io/openjdk) is also installed, this package connects to it automatically for the location of its Java Development Kit runtime and tools.
 
-**Note:** This Snap package is strictly confined, running in complete isolation with only limited access to your system resources. It's an experiment to see what problems occur when running NetBeans in a restricted environment. If you're not interested in participating in the experiment, please install the official [Apache NetBeans Snap package](https://snapcraft.io/netbeans) instead.
+**Note:** This Snap package is strictly confined, running in complete isolation with only limited access to your system resources. This project is an experiment to determine whether NetBeans can run in a restricted environment. Please install this Snap package only if you're interested in such a test. Otherwise, refer to the official [Apache NetBeans Snap package](https://snapcraft.io/netbeans).
 
 ## Motivation
 
 It's getting more and more difficult for Linux distributions to keep up with every new release of the various developer tools. As a result, their package repositories are getting more and more [out of date](https://packages.ubuntu.com/search?keywords=netbeans&searchon=names&exact=1).
 
-One alternative is to get these tools directly from their upstream projects. Yet that involves tracking the updates, downloading each new release, trusting the build infrastructure, verifying the checksum and signatures, unpacking the archive, and setting up environment variables.
+One alternative is to get these tools directly from their upstream projects. Yet that usually involves a tedious list of tasks: tracking the updates, downloading each new release, trusting the build infrastructure, verifying the checksum and signatures, unpacking the archive, and setting up the environment variables.
 
 I wanted a release of NetBeans with the following attributes:
 
@@ -17,9 +17,9 @@ I wanted a release of NetBeans with the following attributes:
 * downloaded, verified, and installed automatically with each update, and
 * confined strictly, having limited access to my development workstation.
 
-The Strictly NetBeans Snap package built by this repository is an experiment in doing just that. It's actually easier for me to keep this Snap package up to date than it is to track, download, trust, verify, unpack, and set up each new release from Apache.
+The Strictly NetBeans Snap package built by this repository does just that. It's actually easier for me to keep this Snap package up to date than it is to track, download, trust, verify, unpack, and set up each new release from Apache.
 
-## Trust
+## Transparency
 
 The steps in building the packages are open and transparent so that you can gain trust in the process that creates them instead of having to put all of your trust in their publisher. Below is a link to each step of the build process:
 
@@ -27,7 +27,7 @@ The steps in building the packages are open and transparent so that you can gain
 * [NetBeans Source](https://github.com/apache/netbeans/branches) - release branches used to obtain the NetBeans source code
 * [Snap Package](https://launchpad.net/~jgneff/+snap/strictly-netbeans) - information about the package and its latest builds
 
-The [Launchpad build farm](https://launchpad.net/builders) runs each build in a transient container created from trusted images to ensure a clean and isolated build environment. Snap packages built on Launchpad include a manifest file, called `manifest.yaml`, that lets you verify the build and identify its dependencies.
+The [Launchpad build farm](https://launchpad.net/builders) runs each build in a transient container created from trusted images to ensure a clean and isolated build environment. It's the same build farm that creates the Debian packages installed on my Ubuntu system. Snap packages built on Launchpad include a manifest file, called `manifest.yaml`, that lets you verify the build and identify its dependencies.
 
 ## Installing
 
@@ -39,12 +39,12 @@ $ sudo snap install strictly-netbeans
 
 The Snap package is [strictly confined](https://snapcraft.io/docs/snap-confinement) and adds the following interfaces to its permissions:
 
-* the [desktop interfaces](https://snapcraft.io/docs/gnome-3-34-extension) for access to the desktop and the GNOME platform and themes,
-* the [home interface](https://snapcraft.io/docs/home-interface) to be able to read and write files under your home directory,
-* the [network interface](https://snapcraft.io/docs/network-interface) to be able to download NetBeans plugins and Maven artifacts, and
-* the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to be able listen on local server sockets.
+* the [desktop interfaces](https://snapcraft.io/docs/gnome-3-34-extension) to run as a graphical desktop application,
+* the [home interface](https://snapcraft.io/docs/home-interface) to read and write files under your home directory,
+* the [network interface](https://snapcraft.io/docs/network-interface) to download NetBeans plugins and Maven artifacts, and
+* the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to listen on local server sockets.
 
-If the [OpenJDK Snap package](https://snapcraft.io/openjdk) is already installed, the Strictly NetBeans Snap package connects to it automatically for its JDK runtime and tools. Otherwise, you can connect them manually with the command:
+If the [OpenJDK Snap package](https://snapcraft.io/openjdk) is also installed, the Strictly NetBeans Snap package connects to it automatically for its JDK runtime and tools. You can connect them manually with the command:
 
 ```console
 $ sudo snap connect strictly-netbeans:jdk-18-1804 openjdk
@@ -60,9 +60,11 @@ content[jdk-18-1804]  strictly-netbeans:jdk-18-1804  openjdk:jdk-18-1804  -
     ...
 ```
 
+You may use a different Java Development Kit by setting the `JAVA_HOME` environment variable, but because the Strictly NetBeans Snap package is strictly confined, the JDK must be located in a non-hidden folder of your home directory.
+
 ## Running
 
-First, verify that the Strictly NetBeans Snap package is working and connected to the OpenJDK Snap package by running it from the command line:
+First, verify that the Strictly NetBeans Snap package is working and connected to the OpenJDK Snap package by starting it from the command line:
 
 ```console
 $ strictly-netbeans
@@ -76,7 +78,7 @@ WARNING: Please consider reporting this to the maintainers of
 WARNING: System::setSecurityManager will be removed in a future release
 ```
 
-You should be presented with the Apache NetBeans window. If you see the following error message, make sure the Strictly NetBeans Snap package is connected to the OpenJDK Snap package as describe above under *Installing*.
+You should be presented with the Apache NetBeans window. If you see the following error message instead of the warnings above, make sure the Strictly NetBeans Snap package is connected to the OpenJDK Snap package as describe earlier under *Installing*.
 
 ```console
 $ strictly-netbeans
@@ -102,6 +104,13 @@ $ git clone https://github.com/jgneff/strictly-netbeans.git
 $ cd strictly-netbeans
 $ snapcraft
 ```
+
+To run the build remotely on a Launchpad build machine, enter the command:
+
+```console
+$ snapcraft remote-build
+```
+
 See the [Snapcraft Overview](https://snapcraft.io/docs/snapcraft-overview) page for more information on building Snap packages.
 
 ## License

@@ -23,8 +23,8 @@ description: |
   NetBeans IDE, can be extended by third-party developers.
 
   This package provides the latest release of NetBeans built directly
-  from its source code on GitHub. If the OpenJDK Snap package is also
-  installed, this package connects to it during installation for the
+  from its source code on GitHub. If the OpenJDK Snap package is
+  also installed, this package connects to it automatically for the
   location of its Java Development Kit runtime and tools.
 
   This Snap package is strictly confined, running in complete
