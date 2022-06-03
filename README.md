@@ -24,7 +24,7 @@ The Strictly NetBeans Snap package created by this repository does just that. It
 
 ## Description
 
-### Trusting
+### Trust
 
 The steps in building the packages are open and transparent so that you can gain trust in the process that creates them instead of having to put all of your trust in their publisher. Below is a link to each step of the build process:
 
@@ -35,7 +35,7 @@ The steps in building the packages are open and transparent so that you can gain
 
 The [Launchpad build farm](https://launchpad.net/builders) runs each build in a transient container created from trusted images to ensure a clean and isolated build environment. It's the same build farm that creates the Debian packages installed on my Ubuntu system, so I'm already trusting its build infrastructure by running Ubuntu. Snap packages built on Launchpad include a manifest file, called `manifest.yaml`, that lets you verify the build and identify its dependencies.
 
-### Installing
+### Install
 
 Install the Strictly NetBeans Snap package with the command:
 
@@ -68,7 +68,7 @@ content[jdk-18-1804]  strictly-netbeans:jdk-18-1804  openjdk:jdk-18-1804  -
 
 You may use a different Java Development Kit by setting the `JAVA_HOME` environment variable, but because the Strictly NetBeans Snap package is strictly confined, the JDK must be located in a non-hidden folder of your home directory.
 
-### Running
+### Run
 
 First, verify that the Strictly NetBeans Snap package is working and connected to the OpenJDK Snap package by starting it from the command line:
 
@@ -100,7 +100,7 @@ For Apache Maven to work, add the following two options under Tools > Options > 
 
 where `USER` is your actual user name on the system.
 
-### Building
+### Build
 
 You can build the Snap package on Linux by installing [Snapcraft](https://snapcraft.io/snapcraft) on your development workstation. Run the following commands to install Snapcraft, clone this repository, and start building the package:
 
