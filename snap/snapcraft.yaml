@@ -57,6 +57,9 @@ plugs:
   jdk-18-1804:
     interface: content
     target: $SNAP/jdk
+  maven-3-1804:
+    interface: content
+    target: $SNAP/maven
 
 apps:
   strictly-netbeans:
