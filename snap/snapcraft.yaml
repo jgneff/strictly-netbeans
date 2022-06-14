@@ -86,6 +86,7 @@ parts:
     build-environment:
     - RELEASE_BRANCH: release140
     override-build: |
+      unset https_proxy
       ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH"
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
     stage:
