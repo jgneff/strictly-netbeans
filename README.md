@@ -22,7 +22,7 @@ I wanted a release of NetBeans that was:
 
 The Strictly NetBeans Snap package created by this repository does just that. It's actually easier for me to keep this Snap package up to date than it is to track, download, trust, verify, unpack, and set up each new release from Apache.
 
-## Description
+## Usage
 
 ### Trust
 
@@ -84,7 +84,7 @@ WARNING: Please consider reporting this to the maintainers of
 WARNING: System::setSecurityManager will be removed in a future release
 ```
 
-You should be presented with the Apache NetBeans window. If you see the following error message instead of the warnings above, make sure the Strictly NetBeans Snap package is connected to the OpenJDK Snap package as describe earlier under *Installing*.
+You should be presented with the Apache NetBeans window. If you see the following error message instead of the warnings above, make sure the Strictly NetBeans Snap package is connected to the OpenJDK Snap package as describe earlier under *Install*.
 
 ```console
 $ strictly-netbeans

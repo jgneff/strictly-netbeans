@@ -87,6 +87,8 @@ parts:
     - RELEASE_BRANCH: release140
     override-build: |
       unset https_proxy
+      SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+      export SOURCE_DATE_EPOCH
       ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH"
       mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
     stage:
