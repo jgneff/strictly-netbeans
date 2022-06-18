@@ -80,7 +80,7 @@ parts:
     source-type: git
     source-branch: release140
     source-depth: 1
-    build-packages: [ant, default-jdk-headless]
+    build-packages: [ant, default-jdk-headless, unzip]
     # See this file for the branch names and commits of each release:
     # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
     build-environment:
@@ -89,8 +89,10 @@ parts:
       unset https_proxy
       SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
       export SOURCE_DATE_EPOCH
-      ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH"
-      mv nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
+      ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH" -Dbuildnum=999 build-source-config
+      unzip -q nbbuild/build/release-src-999.zip -d build-release-temp
+      ant -quiet -f build-release-temp/build.xml -Dmetabuild.branch="$RELEASE_BRANCH"
+      mv build-release-temp/nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
     stage:
     # Excludes conditional files created by Ant target 'build-one-cluster'
     - -netbeans/*.built
