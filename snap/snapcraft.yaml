@@ -86,19 +86,23 @@ parts:
     build-environment:
     - RELEASE_BRANCH: release140
     override-build: |
+      # Avoids causing "503 Service Unavailable" responses on Launchpad
       unset https_proxy
+      # Normalizes timestamps from the Ant Tstamp task
       SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
       export SOURCE_DATE_EPOCH
+      # Builds the source release
       ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH" -Dbuildnum=999 build-source-config
+      # Builds the binary release from the source release
       unzip -q nbbuild/build/release-src-999.zip -d build-release-temp
       ant -quiet -f build-release-temp/build.xml -Dmetabuild.branch="$RELEASE_BRANCH"
       mv build-release-temp/nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
     stage:
-    # Excludes conditional files created by Ant target 'build-one-cluster'
+    # Excludes build files not found in the official Apache release
+    - -netbeans/moduleCluster.properties
     - -netbeans/*.built
-    # Includes JavaFX Implementation for Linux, excluded by official builds
+    # Includes JavaFX Implementation for Linux, excluded by Apache
     # - -netbeans/extra
-    # - -netbeans/moduleCluster.properties
 
 layout:
   # For Fontconfig warnings and errors on startup
