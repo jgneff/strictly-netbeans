@@ -19,12 +19,13 @@ set -o errexit
 : "${SNAP:?}"
 : "${SNAP_USER_DATA:?}"
 : "${SNAP_USER_COMMON:?}"
+: "${SNAP_VERSION:?}"
 
 # Starts NetBeans
 netbeans () {
     "$SNAP/netbeans/bin/netbeans" \
-        --userdir "$SNAP_USER_DATA" \
-        --cachedir "$SNAP_USER_COMMON/netbeans" "$@"
+        --userdir "$SNAP_USER_DATA/$SNAP_VERSION" \
+        --cachedir "$SNAP_USER_COMMON/netbeans/$SNAP_VERSION" "$@"
 }
 
 # Creates the Maven settings file if not present
