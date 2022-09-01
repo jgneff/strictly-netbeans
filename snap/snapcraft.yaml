@@ -88,15 +88,22 @@ parts:
     override-build: |
       # Avoids causing "503 Service Unavailable" responses on Launchpad
       unset https_proxy
+
       # Normalizes timestamps from the Ant Tstamp task
       SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
       export SOURCE_DATE_EPOCH
+
       # Builds the source release
       ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH" -Dbuildnum=999 build-source-config
+
       # Builds the binary release from the source release
       unzip -q nbbuild/build/release-src-999.zip -d build-release-temp
       ant -quiet -f build-release-temp/build.xml -Dmetabuild.branch="$RELEASE_BRANCH"
       mv build-release-temp/nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
+
+      # Patches the default location of the local repository
+      cp "$SNAPCRAFT_PROJECT_DIR/conf/settings-global.xml" \
+          "$SNAPCRAFT_PART_INSTALL/netbeans/java/maven/conf/settings.xml"
     stage:
     # Excludes build files not found in the official Apache release
     - -netbeans/moduleCluster.properties

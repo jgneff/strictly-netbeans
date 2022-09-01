@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+    <!-- localRepository
+    | The path to the local repository Maven will use to store artifacts.
+    | Must be a non-hidden directory owned by the user in the user's home
+    | directory to be accessible by this strictly-confined Snap package.
+    | Default: ${user.home}/snap/strictly-netbeans/common/repository
+    -->
+    <localRepository>${env.SNAP_USER_COMMON}/repository</localRepository>
+</settings>

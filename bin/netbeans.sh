@@ -25,16 +25,15 @@ set -o errexit
 netbeans () {
     "$SNAP/netbeans/bin/netbeans" \
         --userdir "$SNAP_USER_DATA/$SNAP_VERSION" \
-        --cachedir "$SNAP_USER_COMMON/netbeans/$SNAP_VERSION" "$@"
+        --cachedir "$SNAP_USER_COMMON/$SNAP_VERSION" "$@"
 }
 
-# Creates the Maven settings file if not present
-if [ ! -e "$SNAP_USER_COMMON/maven/settings.xml" ]; then
-    mkdir -p "$SNAP_USER_COMMON/maven"
-    cp "$SNAP/conf/settings.xml" "$SNAP_USER_COMMON/maven"
+# Creates the Maven user settings file if not found
+if [ ! -e "$SNAP_USER_COMMON/settings.xml" ]; then
+    cp "$SNAP/conf/settings-user.xml" "$SNAP_USER_COMMON/settings.xml"
 fi
 
-# Uses JAVA_HOME if set; otherwise, OpenJDK Snap if connected
+# Uses JAVA_HOME if set; otherwise, uses OpenJDK Snap if connected
 if [ -n "$JAVA_HOME" ]; then
     netbeans --jdkhome "$JAVA_HOME" "$@"
 elif [ -d "$SNAP/jdk" ]; then

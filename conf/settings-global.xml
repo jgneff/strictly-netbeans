@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+
+    <!-- localRepository
+    | The path to the local repository Maven will use to store artifacts.
+    | Moves the local repository to a default location accessible by this
+    | strictly-confined Snap package.
+    | Old default: ${user.home}/.m2/repository
+    | New default: ${user.home}/snap/strictly-netbeans/common/repository
+    -->
+    <localRepository>${env.SNAP_USER_COMMON}/repository</localRepository>
+
+    <!-- mirror
+    | MNG-7118 - Block external HTTP repositories by default
+    | https://issues.apache.org/jira/browse/MNG-7118
+    -->
+    <mirrors>
+        <mirror>
+            <id>maven-default-http-blocker</id>
+            <mirrorOf>external:http:*</mirrorOf>
+            <name>Pseudo repository to mirror external repositories initially using HTTP.</name>
+            <url>http://0.0.0.0/</url>
+            <blocked>true</blocked>
+        </mirror>
+    </mirrors>
+</settings>
