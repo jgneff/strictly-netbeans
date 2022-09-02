@@ -25,7 +25,8 @@ set -o errexit
 netbeans () {
     "$SNAP/netbeans/bin/netbeans" \
         --userdir "$SNAP_USER_DATA/$SNAP_VERSION" \
-        --cachedir "$SNAP_USER_COMMON/$SNAP_VERSION" "$@"
+        --cachedir "$SNAP_USER_COMMON/$SNAP_VERSION" \
+        -J-Dnetbeans.default_userdir_root="$HOME" "$@"
 }
 
 # Creates the Maven user settings file if not found
