@@ -34,11 +34,11 @@ if [ ! -e "$SNAP_USER_COMMON/settings.xml" ]; then
     cp "$SNAP/conf/settings-user.xml" "$SNAP_USER_COMMON/settings.xml"
 fi
 
-# Uses JAVA_HOME if set; otherwise, uses OpenJDK Snap if connected
-if [ -n "$JAVA_HOME" ]; then
-    netbeans --jdkhome "$JAVA_HOME" "$@"
-elif [ -d "$SNAP/jdk" ]; then
+# Uses the OpenJDK Snap if connected; otherwise uses JAVA_HOME if set
+if [ -d "$SNAP/jdk" ]; then
     netbeans --jdkhome "$SNAP/jdk" "$@"
+elif [ -n "$JAVA_HOME" ]; then
+    netbeans --jdkhome "$JAVA_HOME" "$@"
 else
     netbeans "$@"
 fi
