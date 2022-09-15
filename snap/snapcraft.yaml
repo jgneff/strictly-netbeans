@@ -25,16 +25,16 @@ description: |
   This package provides the latest release of NetBeans built directly
   from its source code on GitHub. If the OpenJDK Snap package is
   also installed, this package connects to it automatically for the
-  location of its Java Development Kit runtime and tools.
+  location of its Java Development Kit.
 
-  This Snap package is strictly confined, running in complete
-  isolation with only limited access to your system resources. For
-  more information, see the repository for this package on GitHub:
+  This Snap package is strictly confined, running in complete isolation
+  with only limited access to your system. For more information,
+  see the repository for this package on GitHub:
 
   https://github.com/jgneff/strictly-netbeans
 
-  This is a convenience binary of the Apache NetBeans IDE and not a
-  release by the Apache Software Foundation. Official releases are at:
+  This is a convenience binary of the NetBeans IDE and not a release
+  by the Apache Software Foundation. For official releases, see:
 
   https://netbeans.apache.org
 
@@ -86,7 +86,8 @@ parts:
     build-environment:
     - RELEASE_BRANCH: release150
     override-build: |
-      # Avoids causing "503 Service Unavailable" responses on Launchpad
+      # Avoids causing "503 Service Unavailable" errors on Launchpad
+      # See: https://github.com/apache/netbeans/pull/4206
       unset https_proxy
 
       # Normalizes timestamps from the Ant Tstamp task
