@@ -51,7 +51,7 @@ confinement: strict
 
 architectures:
 - build-on: amd64
-  run-on: [amd64, arm64, armhf, i386, ppc64el, s390x]
+  run-on: [amd64, arm64, armhf]
 
 plugs:
   jdk-18-1804:
