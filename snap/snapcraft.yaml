@@ -51,7 +51,7 @@ confinement: strict
 
 architectures:
 - build-on: amd64
-  run-on: [amd64, arm64, armhf]
+  run-on: [amd64, arm64, armhf, i386]
 
 plugs:
   jdk-18-1804:
@@ -64,7 +64,7 @@ plugs:
 apps:
   strictly-netbeans:
     command: bin/netbeans.sh
-    extensions: [gnome-3-34]
+    extensions: [gnome-3-28]
     plugs: [home, network, network-bind]
 
 parts:
