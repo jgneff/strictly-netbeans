@@ -29,13 +29,6 @@ netbeans () {
         -J-Dnetbeans.default_userdir_root="$HOME" "$@"
 }
 
-# Skips trying to read '/etc/gitconfig'
-export GIT_CONFIG_NOSYSTEM=1        # Supported by JGit
-export GIT_CONFIG_SYSTEM=/dev/null  # Not yet supported by JGit
-
-# Skips trying to read '${user.home}/.gitconfig' (Permission denied)
-export GIT_CONFIG_GLOBAL=/dev/null  # Not yet supported by JGit
-
 # Creates the Maven user settings file if not found
 if [ ! -e "$SNAP_USER_COMMON/settings.xml" ]; then
     cp "$SNAP/conf/settings-user.xml" "$SNAP_USER_COMMON/settings.xml"
