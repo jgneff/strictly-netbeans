@@ -143,7 +143,7 @@ The Strictly NetBeans Snap package has no access to the system-wide Git configur
 java.io.FileNotFoundException: /home/john/.gitconfig (Permission denied)
 ```
 
-There is a way to make NetBeans skip this file and still use the repository-specific configuration file `.git/config`. Unfortunately, the [Eclipse JGit](https://git.eclipse.org/c/jgit/jgit.git/tree/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#n74) library used by NetBeans does not yet support the new environment variables that make this possible. In the meanwhile, the Strictly NetBeans [startup script](bin/netbeans.sh) sets the variables so that at least some of the Git features can work once JGit adds the support.
+There is a way to make NetBeans skip this file and still use the repository-specific configuration file `.git/config`. Unfortunately, the [Eclipse JGit](https://git.eclipse.org/c/jgit/jgit.git/tree/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#n74) library used by NetBeans does not yet support the new `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM` environment variables that make this possible. The build file [adds these variables](snap/snapcraft.yaml) to the Strictly NetBeans environment so that at least some of the Git features can work once JGit adds the support.
 
 The disadvantage for now is that NetBeans fails to display the changes in the editor since the last commit. On the other hand, for full Git support, NetBeans would require access to the system and global Git configuration files and also to your private keys for signing commits. Instead, I simply run all Git commands in the Terminal outside of NetBeans.
 
