@@ -1,6 +1,10 @@
 ![Strictly NetBeans: Apache NetBeans® in a strictly-confined snap](images/banner.svg)
 
-[Apache NetBeans](https://netbeans.apache.org) is an integrated development environment (IDE) for Java, with extensions for PHP, C, C++, HTML5, JavaScript, and other languages. This project builds [Snap packages](https://snapcraft.io/strictly-netbeans) of NetBeans directly from its [source repository](https://github.com/apache/netbeans) on GitHub. These packages are strictly confined, running in complete isolation with only limited access to your system. See the **Install** and **Usage** sections below for details.
+[Apache NetBeans](https://netbeans.apache.org) is an integrated development environment (IDE) for Java, with extensions for PHP, C, C++, HTML5, JavaScript, and other languages. This project builds [Snap packages](https://snapcraft.io/strictly-netbeans) of NetBeans directly from its [source repository](https://github.com/apache/netbeans) on GitHub. These packages are **strictly confined**, running in complete isolation with only limited access to your system. See the **Install** and **Usage** sections below for important details.
+
+Note especially that the Gradle and Git support in NetBeans is not yet working when strictly confined. If you require the full use of Gradle or Git from within NetBeans itself, you'll need to download and install an [official release](https://netbeans.apache.org/download/) that runs in an unconfined environment with full access to your system.
+
+If, like me, you run Git in the Terminal outside of NetBeans and use the Apache Ant and Apache Maven build tools, you should be able to run the Strictly NetBeans Snap package without problems.
 
 ## Install
 
@@ -12,7 +16,7 @@ $ sudo snap install strictly-netbeans
 
 The Snap package is [strictly confined](https://snapcraft.io/docs/snap-confinement) and adds only the following interfaces to its permissions:
 
-* the [desktop interfaces](https://snapcraft.io/docs/gnome-3-34-extension) to run as a graphical desktop application,
+* the [desktop interfaces](https://snapcraft.io/docs/gnome-3-28-extension) to run as a graphical desktop application,
 * the [home interface](https://snapcraft.io/docs/home-interface) to read and write files under your home directory,
 * the [network interface](https://snapcraft.io/docs/network-interface) to download NetBeans plugins and Maven artifacts, and
 * the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to listen on local server sockets.
@@ -37,7 +41,7 @@ You can also connect them manually with the command:
 $ sudo snap connect strictly-netbeans:jdk-18-1804 openjdk
 ```
 
-You can use a different JDK by disconnecting the OpenJDK Snap package and setting the `JAVA_HOME` environment variable. Because the Strictly NetBeans Snap package is strictly confined, the JDK must be located in a non-hidden folder of your home directory. For example:
+You can use a different JDK by disconnecting the OpenJDK Snap package and setting the `JAVA_HOME` environment variable. Because the Strictly NetBeans Snap package is strictly confined, the JDK must be located under a non-hidden folder of your home directory. For example:
 
 ```console
 $ sudo snap disconnect strictly-netbeans:jdk-18-1804
@@ -119,7 +123,7 @@ WARNING: Please consider reporting this to the maintainers of org.netbeans.TopSe
 WARNING: System::setSecurityManager will be removed in a future release
 ```
 
-You should be presented with the Apache NetBeans window. If you instead see the error message below, make sure that the OpenJDK Snap package is installed and connected as described earlier under the **Install** section:
+You should be presented with the Apache NetBeans window. If instead you see the error message below, make sure that the OpenJDK Snap package is installed and connected as described earlier under the **Install** section:
 
 ```console
 $ strictly-netbeans
@@ -135,7 +139,35 @@ The Snap package does not have access to hidden files or folders in your home di
 | `~/.m2/settings.xml`    | `~/snap/strictly-netbeans/common/settings.xml` |
 | `~/.m2/repository`      | `~/snap/strictly-netbeans/common/repository`   |
 
-### A Note on Git
+### Ant Build Tool
+
+Projects using Apache Ant still work in this strictly-confined environment.
+
+### Maven Build Tool
+
+Projects using Apache Maven still work in this strictly-confined environment. Note that the Maven settings file and repository directory are found in their alternative locations as described above.
+
+If the [Strictly Maven Snap package](https://snapcraft.io/strictly-maven) is also installed, the Strictly NetBeans Snap package connects to it automatically for its Apache Maven build tool:
+
+```console
+$ sudo snap install strictly-maven
+```
+
+To use Strictly Maven instead of the Maven release that is bundled with NetBeans, select "Browse..." under Tools > Options > Java > Maven > Execution > Maven Home to open the dialog "Select Maven Installation Location." Then open the directory:
+
+```
+/snap/strictly-netbeans/current/maven
+```
+
+**Note:** Before building any Maven projects, add the Maven option `--strict-checksums` under Tools > Options > Java > Maven > Execution > Global Execution Options. Maven should fail the build when a downloaded artifact does not match its checksum, yet that is [not the default](https://issues.apache.org/jira/browse/MNG-5728) in the current release.
+
+### Gradle Build Tool
+
+Projects using Gradle do not work in this strictly-confined environment. The Gradle support in NetBeans fails to build or even create a Gradle project when it is denied access to the `~/.gradle` hidden folder in the user's home directory.
+
+Note that Gradle tries to create the hidden folder even when its user home is set to an alternative location. For example, after setting the Gradle User Home to `~/snap/strictly-netbeans/common/gradle` in the panel under Tools > Options > Java > Gradle > Execution, Gradle still tries to create the default `~/.gradle` directory and fails to recover when denied permission.
+
+### Git Version Control
 
 The Strictly NetBeans Snap package has no access to the system-wide Git configuration file `/etc/gitconfig` nor the user-specific "global" configuration files `~/.gitconfig` and `~/.config/git/config`. As a result, you might see error messages like the following when you first open a project that is also a Git repository:
 
