@@ -28,8 +28,9 @@ description: |
   location of its Java Development Kit.
 
   This Snap package is strictly confined, running in complete isolation
-  with only limited access to your system. For more information,
-  see the repository for this package on GitHub:
+  with only limited access to your system. For important information
+  about running NetBeans in a confined environment, see the README
+  file for this package on GitHub:
 
   https://github.com/jgneff/strictly-netbeans
 
@@ -54,9 +55,10 @@ architectures:
   run-on: [amd64, arm64, armhf, i386]
 
 plugs:
-  jdk-18-1804:
+  jdk-19-1804:
     interface: content
     target: $SNAP/jdk
+    default-provider: openjdk
   maven-3-1804:
     interface: content
     target: $SNAP/maven

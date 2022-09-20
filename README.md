@@ -1,10 +1,14 @@
 ![Strictly NetBeans: Apache NetBeans® in a strictly-confined snap](images/banner.svg)
 
-[Apache NetBeans](https://netbeans.apache.org) is an integrated development environment (IDE) for Java, with extensions for PHP, C, C++, HTML5, JavaScript, and other languages. This project builds [Snap packages](https://snapcraft.io/strictly-netbeans) of NetBeans directly from its [source repository](https://github.com/apache/netbeans) on GitHub. These packages are **strictly confined**, running in complete isolation with only limited access to your system. See the **Install** and **Usage** sections below for important details.
+[Apache NetBeans](https://netbeans.apache.org) is an integrated development environment (IDE) for Java, with extensions for PHP, C, C++, HTML5, JavaScript, and other languages. This project builds [Snap packages](https://snapcraft.io/strictly-netbeans) of NetBeans directly from its [source repository](https://github.com/apache/netbeans) on GitHub. These packages are strictly confined, running in complete isolation with only limited access to your system. See the **Install** and **Usage** sections below for details.
 
-Note especially that the Gradle and Git support in NetBeans is not yet working when strictly confined. If you require the full use of Gradle or Git from within NetBeans itself, you'll need to download and install an [official release](https://netbeans.apache.org/download/) that runs in an unconfined environment with full access to your system.
+**Important note:** The NetBeans support for Git and Gradle do not work when strictly confined. If you require the full use of Git or Gradle from within NetBeans, do not install the Strictly NetBeans Snap package. Instead, download and install the [official release](https://netbeans.apache.org/download/), which runs in an unconfined environment with the full access required by Git and Gradle. If, on the other hand, you run Git in the Terminal outside of NetBeans and use only the Apache Ant and Apache Maven build tools, you should be able to run the Strictly NetBeans Snap package without problems.
 
-If, like me, you run Git in the Terminal outside of NetBeans and use the Apache Ant and Apache Maven build tools, you should be able to run the Strictly NetBeans Snap package without problems.
+## See also
+
+* [OpenJDK](https://github.com/jgneff/openjdk) - Current JDK release and early-access builds
+* [OpenJFX](https://github.com/jgneff/openjfx) - Current JavaFX release and early-access builds
+* [Strictly Maven](https://github.com/jgneff/strictly-maven) - Apache Maven™ in a strictly-confined snap
 
 ## Install
 
@@ -21,30 +25,30 @@ The Snap package is [strictly confined](https://snapcraft.io/docs/snap-confineme
 * the [network interface](https://snapcraft.io/docs/network-interface) to download NetBeans plugins and Maven artifacts, and
 * the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to listen on local server sockets.
 
-If the [OpenJDK Snap package](https://snapcraft.io/openjdk) is also installed, the Strictly NetBeans Snap package connects to it automatically for its Java Development Kit (JDK):
+When you install Strictly NetBeans, it will automatically install the [OpenJDK Snap package](https://snapcraft.io/openjdk) and connect to it for its Java Development Kit (JDK). You can also install the OpenJDK Snap package manually with the command:
 
 ```console
 $ sudo snap install openjdk
 ```
 
-Once both packages are installed, you'll see the following interface among the list of connections:
+After both packages are installed, you'll see the following interface among their list of connections:
 
 ```console
 $ snap connections strictly-netbeans
 Interface             Plug                           Slot                 Notes
-content[jdk-18-1804]  strictly-netbeans:jdk-18-1804  openjdk:jdk-18-1804  -
+content[jdk-19-1804]  strictly-netbeans:jdk-19-1804  openjdk:jdk-19-1804  -
 ```
 
 You can also connect them manually with the command:
 
 ```console
-$ sudo snap connect strictly-netbeans:jdk-18-1804 openjdk
+$ sudo snap connect strictly-netbeans:jdk-19-1804 openjdk:jdk-19-1804
 ```
 
 You can use a different JDK by disconnecting the OpenJDK Snap package and setting the `JAVA_HOME` environment variable. Because the Strictly NetBeans Snap package is strictly confined, the JDK must be located under a non-hidden folder of your home directory. For example:
 
 ```console
-$ sudo snap disconnect strictly-netbeans:jdk-18-1804
+$ sudo snap disconnect strictly-netbeans:jdk-19-1804
 $ export JAVA_HOME=$HOME/opt/jdk-20
 $ strictly-netbeans
 ```
@@ -139,11 +143,11 @@ The Snap package does not have access to hidden files or folders in your home di
 | `~/.m2/settings.xml`    | `~/snap/strictly-netbeans/common/settings.xml` |
 | `~/.m2/repository`      | `~/snap/strictly-netbeans/common/repository`   |
 
-### Ant Build Tool
+### Ant build tool
 
 Projects using Apache Ant still work in this strictly-confined environment.
 
-### Maven Build Tool
+### Maven build tool
 
 Projects using Apache Maven still work in this strictly-confined environment. Note that the Maven settings file and repository directory are found in their alternative locations as described above.
 
@@ -159,15 +163,15 @@ To use Strictly Maven instead of the Maven release that is bundled with NetBeans
 /snap/strictly-netbeans/current/maven
 ```
 
-**Note:** Before building any Maven projects, add the Maven option `--strict-checksums` under Tools > Options > Java > Maven > Execution > Global Execution Options. Maven should fail the build when a downloaded artifact does not match its checksum, yet that is [not the default](https://issues.apache.org/jira/browse/MNG-5728) in the current release.
+**Note:** Before building any Maven projects, add the option `--strict-checksums` under Tools > Options > Java > Maven > Execution > Global Execution Options. It's best to have Maven fail the build when a downloaded artifact does not match its checksum, yet that is [not the default](https://issues.apache.org/jira/browse/MNG-5728) in the current release.
 
-### Gradle Build Tool
+### Gradle build tool
 
 Projects using Gradle do not work in this strictly-confined environment. The Gradle support in NetBeans fails to build or even create a Gradle project when it is denied access to the `~/.gradle` hidden folder in the user's home directory.
 
 Note that Gradle tries to create the hidden folder even when its user home is set to an alternative location. For example, after setting the Gradle User Home to `~/snap/strictly-netbeans/common/gradle` in the panel under Tools > Options > Java > Gradle > Execution, Gradle still tries to create the default `~/.gradle` directory and fails to recover when denied permission.
 
-### Git Version Control
+### Git version control
 
 The Strictly NetBeans Snap package has no access to the system-wide Git configuration file `/etc/gitconfig` nor the user-specific "global" configuration files `~/.gitconfig` and `~/.config/git/config`. As a result, you might see error messages like the following when you first open a project that is also a Git repository:
 
@@ -175,7 +179,7 @@ The Strictly NetBeans Snap package has no access to the system-wide Git configur
 java.io.FileNotFoundException: /home/john/.gitconfig (Permission denied)
 ```
 
-There is a way to make NetBeans skip this file and still use the repository-specific configuration file `.git/config`. Unfortunately, the [Eclipse JGit](https://git.eclipse.org/c/jgit/jgit.git/tree/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#n74) library used by NetBeans does not yet support the new `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM` environment variables that make this possible. The build file [adds these variables](snap/snapcraft.yaml) to the Strictly NetBeans environment so that at least some of the Git features can work once JGit adds the support.
+There is a way to make NetBeans skip this file and still use the repository-specific configuration file `.git/config`. Unfortunately, the [Eclipse JGit library](https://www.eclipse.org/jgit/) used by NetBeans does [not yet support](https://git.eclipse.org/c/jgit/jgit.git/tree/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#n74) the new environment variables `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM` that make this possible. The build file [adds these variables](snap/snapcraft.yaml) to the Strictly NetBeans environment anyway, so at least some of the Git features can work once JGit adds the support.
 
 The disadvantage for now is that NetBeans fails to display the changes in the editor since the last commit. On the other hand, for full Git support, NetBeans would require access to the system and global Git configuration files and also to your private keys for signing commits. Instead, I simply run all Git commands in the Terminal outside of NetBeans.
 
