@@ -2,13 +2,27 @@
 
 [Apache NetBeans](https://netbeans.apache.org) is an integrated development environment (IDE) for Java, with extensions for PHP, C, C++, HTML5, JavaScript, and other languages. This project builds [Snap packages](https://snapcraft.io/strictly-netbeans) of NetBeans directly from its [source repository](https://github.com/apache/netbeans) on GitHub. These packages are strictly confined, running in complete isolation with only limited access to your system. See the **Install** and **Usage** sections below for details.
 
-**Important note:** The NetBeans support for Git and Gradle do not work when strictly confined. If you require the full use of Git or Gradle from within NetBeans, do not install the Strictly NetBeans Snap package. Instead, download and install the [official release](https://netbeans.apache.org/download/), which runs in an unconfined environment with the full access required by Git and Gradle. If, on the other hand, you run Git in the Terminal outside of NetBeans and use only the Apache Ant and Apache Maven build tools, you should be able to run the Strictly NetBeans Snap package without problems.
+**Warning:** The IDE support for Git and Gradle do not work in a strictly-confined environment. If you require the use of Git or Gradle from within NetBeans, you'll need to download and install the unconfined [official release](https://netbeans.apache.org/download/) of NetBeans instead of this Snap package. If, like me, you prefer to run Git in the Terminal outside of NetBeans and use only the Apache Ant and Apache Maven build tools, you should be able to run the Strictly NetBeans Snap package without problems. See the **Usage** section below for more information.
 
 ## See also
 
+This project is one of four that I created to gain control of my development environment:
+
 * [OpenJDK](https://github.com/jgneff/openjdk) - Current JDK release and early-access builds
+
+    [![openjdk](https://snapcraft.io/openjdk/badge.svg)](https://snapcraft.io/openjdk)
+
 * [OpenJFX](https://github.com/jgneff/openjfx) - Current JavaFX release and early-access builds
+
+    [![openjfx](https://snapcraft.io/openjfx/badge.svg)](https://snapcraft.io/openjfx)
+
 * [Strictly Maven](https://github.com/jgneff/strictly-maven) - Apache Maven™ in a strictly-confined snap
+
+    [![strictly-maven](https://snapcraft.io/strictly-maven/badge.svg)](https://snapcraft.io/strictly-maven)
+
+* [Strictly NetBeans](https://github.com/jgneff/strictly-netbeans) - Apache NetBeans® in a strictly-confined snap
+
+    [![strictly-netbeans](https://snapcraft.io/strictly-netbeans/badge.svg)](https://snapcraft.io/strictly-netbeans)
 
 ## Install
 
