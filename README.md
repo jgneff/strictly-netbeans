@@ -2,7 +2,16 @@
 
 [Apache NetBeans](https://netbeans.apache.org) is an integrated development environment (IDE) for Java, with extensions for PHP, C, C++, HTML5, JavaScript, and other languages. This project builds [Snap packages](https://snapcraft.io/strictly-netbeans) of NetBeans directly from its [source repository](https://github.com/apache/netbeans) on GitHub. These packages are strictly confined, running in complete isolation with only limited access to your system. See the **Install** and **Usage** sections below for details.
 
-**Warning:** The IDE support for Git and Gradle do not work in a strictly-confined environment. If you require the use of Git or Gradle from within NetBeans, you'll need to download and install the unconfined [official release](https://netbeans.apache.org/download/) of NetBeans instead of this Snap package. If, like me, you prefer to run Git in the Terminal outside of NetBeans and use only the Apache Ant and Apache Maven build tools, you should be able to run the Strictly NetBeans Snap package without problems. See the **Usage** section below for more information.
+The table below provides a summary of the support for Git version control and the Apache Ant, Apache Maven, and Gradle build tools in this strictly-confined environment:
+
+| Tool   | Support | Comment |
+| ------ |:-------:| ------- |
+| Git    | ✔ | Works, but uses only the local Git repository configuration file. See notes below. |
+| Ant    | ✔ | Works as expected. |
+| Maven  | ✔ | Works, but uses alternative locations for the Maven user settings file and local repository directory. See notes below. |
+| Gradle | ❌ | Does not work. |
+
+If you require the full use of Git or Gradle from within NetBeans, you'll need to download and install the unconfined [official release](https://netbeans.apache.org/download/) instead of the Strictly NetBeans Snap package. If, like me, you prefer to run Git in the Terminal outside of NetBeans and use only the Apache Ant and Apache Maven build tools, you should be able to use Strictly NetBeans for your software development. See the **Usage** section below for important instructions on how to avoid problems.
 
 ## See also
 
@@ -36,8 +45,9 @@ The Snap package is [strictly confined](https://snapcraft.io/docs/snap-confineme
 
 * the [desktop interfaces](https://snapcraft.io/docs/gnome-3-28-extension) to run as a graphical desktop application,
 * the [home interface](https://snapcraft.io/docs/home-interface) to read and write files under your home directory,
-* the [network interface](https://snapcraft.io/docs/network-interface) to download NetBeans plugins and Maven artifacts, and
-* the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to listen on local server sockets.
+* the [network interface](https://snapcraft.io/docs/network-interface) to download NetBeans plugins and Maven artifacts,
+* the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to listen on local server sockets, and
+* the optional [mount-observe interface](https://snapcraft.io/docs/mount-observe-interface) to enable Git support for the project repository.
 
 When you install Strictly NetBeans, it will automatically install the [OpenJDK Snap package](https://snapcraft.io/openjdk) and connect to it for its Java Development Kit (JDK). You can also install the OpenJDK Snap package manually with the command:
 
@@ -73,10 +83,10 @@ The steps in building the packages are open and transparent so that you can gain
 
 Each step of the build process is documented below:
 
-* [Build File](snap/snapcraft.yaml) - the Snapcraft build file that creates the Snap package
+* [Build File](snap/snapcraft.yaml) - the Snapcraft build file that creates the package
 * [Source Code](https://github.com/apache/netbeans/branches) - the release branches used to obtain the NetBeans source code
 * [Snap Package](https://launchpad.net/~jgneff/+snap/strictly-netbeans) - information about the package and its latest builds on Launchpad
-* [Snap Store](https://snapcraft.io/strictly-netbeans) - the listing for Strictly NetBeans in the Snap Store
+* [Store Listing](https://snapcraft.io/strictly-netbeans) - the listing for the package in the Snap Store
 
 The [Launchpad build farm](https://launchpad.net/builders) runs each build in a transient container created from trusted images to ensure a clean and isolated build environment. Snap packages built on Launchpad include a manifest that lets you verify the build and identify its dependencies.
 
@@ -141,21 +151,78 @@ WARNING: Please consider reporting this to the maintainers of org.netbeans.TopSe
 WARNING: System::setSecurityManager will be removed in a future release
 ```
 
-You should be presented with the Apache NetBeans window. If instead you see the error message below, make sure that the OpenJDK Snap package is installed and connected as described earlier under the **Install** section:
+You should be presented with the Apache NetBeans window. If instead you see the error message printed below, make sure that the OpenJDK Snap package is installed and connected as described previously in the **Install** section.
 
 ```console
 $ strictly-netbeans
 Cannot find java. Please use the --jdkhome switch.
 ```
 
-The Snap package does not have access to hidden files or folders in your home directory, so it uses the following alternative locations for the NetBeans user settings and user cache and for the Maven user settings and local repository:
+The Snap package does not have access to hidden files or folders in your home directory, so it uses the following alternative locations for the NetBeans user settings and user cache directories:
 
 | Apache NetBeans Default | Strictly NetBeans Alternative |
 |-------------------------|-------------------------------|
 | `~/.netbeans`           | `~/snap/strictly-netbeans/current` |
 | `~/.cache/netbeans`     | `~/snap/strictly-netbeans/common`  |
-| `~/.m2/settings.xml`    | `~/snap/strictly-netbeans/common/settings.xml` |
-| `~/.m2/repository`      | `~/snap/strictly-netbeans/common/repository`   |
+
+### Git version control
+
+You need to make two changes for Git to work:
+
+1. Move the user-specific "global" configuration file to its secondary location.
+2. Enable the permission to "Read system mount information and disk quotas."
+
+You can make both changes with the following two commands:
+
+```console
+$ mv ~/.gitconfig ~/.config/git/config
+$ sudo snap connect strictly-netbeans:mount-observe
+```
+
+These changes are explained in detail below.
+
+#### Move global configuration to secondary location
+
+The Strictly NetBeans Snap package has no access to the primary user-specific "global" configuration file `~/.gitconfig`. As a result, you may see error messages like the following when you first open a project that is also a Git repository:
+
+```
+java.io.FileNotFoundException: /home/john/.gitconfig (Permission denied)
+```
+
+NetBeans fails to recover from the error, essentially disabling all of its Git support. There could be a way to make NetBeans use an alternative location for the file, but its [Eclipse JGit](https://www.eclipse.org/jgit/) library does [not yet support](https://git.eclipse.org/c/jgit/jgit.git/tree/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#n74) the environment variable `GIT_CONFIG_GLOBAL` that would make this possible.
+
+There is, however, a small change you can make to avoid the error. The JGit library looks for the global configuration file only in its primary location. If you move the file to its secondary location, you will hide it from JGit while still being able to use it for normal Git commands outside of NetBeans:
+
+```console
+$ mv ~/.gitconfig ~/.config/git/config
+```
+
+This change lets JGit avoid the error and continue to load the local repository-specific configuration file `.git/config` in the project's directory. You won't be able to perform Git operations in NetBeans that require values of variables from the global configuration, such as `user.name` and `user.email`, but you'll still be able to see the Git history along with any changes in the editor since the last commit. For everything else, I simply run the Git commands in the Terminal outside of NetBeans.
+
+#### Add permission to read system mount information
+
+After moving the global configuration file to its secondary location, you'll then encounter the following error:
+
+```
+java.io.IOException: Mount point not found
+```
+
+To avoid this error, connect the optional `mount-observe` plug to its core slot with the following command:
+
+```
+$ sudo snap connect strictly-netbeans:mount-observe
+```
+
+Alternatively, you can enable the permission to "Read system mount information and disk quotas" in either the Ubuntu Software or GNOME Software application.
+
+This permission lets the JGit library determine whether the repository's file system is writable. A writable file system lets JGit measure the timestamp resolution and avoid the [racy Git](https://git-scm.com/docs/racy-git) problem. JGit saves this information in its configuration file, shown in the example below:
+
+```console
+$ cat ~/snap/strictly-netbeans/current/.config/jgit/config
+[filesystem "Snap Build|19|/dev/mapper/sda1_crypt"]
+    timestampResolution = 5498 nanoseconds
+    minRacyThreshold = 4069 microseconds
+```
 
 ### Ant build tool
 
@@ -163,15 +230,20 @@ Projects using Apache Ant still work in this strictly-confined environment.
 
 ### Maven build tool
 
-Projects using Apache Maven still work in this strictly-confined environment. Note that the Maven settings file and repository directory are found in their alternative locations as described above.
+Projects using Apache Maven still work in this strictly-confined environment. Note that the Maven user settings file and local repository directory are found in the alternative locations shown below:
 
-If the [Strictly Maven Snap package](https://snapcraft.io/strictly-maven) is also installed, the Strictly NetBeans Snap package connects to it automatically for its Apache Maven build tool:
+| Apache NetBeans Default | Strictly NetBeans Alternative |
+|-------------------------|-------------------------------|
+| `~/.m2/settings.xml`    | `~/snap/strictly-netbeans/common/settings.xml` |
+| `~/.m2/repository`      | `~/snap/strictly-netbeans/common/repository`   |
+
+If the [Strictly Maven Snap package](https://snapcraft.io/strictly-maven) is also installed, the Strictly NetBeans Snap package connects to it automatically. You can install it with the command:
 
 ```console
 $ sudo snap install strictly-maven
 ```
 
-To use Strictly Maven instead of the Maven release that is bundled with NetBeans, select "Browse..." under Tools > Options > Java > Maven > Execution > Maven Home to open the dialog "Select Maven Installation Location." Then open the directory:
+To use Strictly Maven instead of the Maven release that is bundled with NetBeans, select "Browse..." under Tools > Options > Java > Maven > Execution > Maven Home to open the dialog "Select Maven Installation Location," and then open the directory:
 
 ```
 /snap/strictly-netbeans/current/maven
@@ -183,19 +255,7 @@ To use Strictly Maven instead of the Maven release that is bundled with NetBeans
 
 Projects using Gradle do not work in this strictly-confined environment. The Gradle support in NetBeans fails to build or even create a Gradle project when it is denied access to the `~/.gradle` hidden folder in the user's home directory.
 
-Note that Gradle tries to create the hidden folder even when its user home is set to an alternative location. For example, after setting the Gradle User Home to `~/snap/strictly-netbeans/common/gradle` in the panel under Tools > Options > Java > Gradle > Execution, Gradle still tries to create the default `~/.gradle` directory and fails to recover when denied permission.
-
-### Git version control
-
-The Strictly NetBeans Snap package has no access to the system-wide Git configuration file `/etc/gitconfig` nor the user-specific "global" configuration files `~/.gitconfig` and `~/.config/git/config`. As a result, you might see error messages like the following when you first open a project that is also a Git repository:
-
-```
-java.io.FileNotFoundException: /home/john/.gitconfig (Permission denied)
-```
-
-There is a way to make NetBeans skip this file and still use the repository-specific configuration file `.git/config`. Unfortunately, the [Eclipse JGit library](https://www.eclipse.org/jgit/) used by NetBeans does [not yet support](https://git.eclipse.org/c/jgit/jgit.git/tree/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#n74) the new environment variables `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM` that make this possible. The build file [adds these variables](snap/snapcraft.yaml) to the Strictly NetBeans environment anyway, so at least some of the Git features can work once JGit adds the support.
-
-The disadvantage for now is that NetBeans fails to display the changes in the editor since the last commit. On the other hand, for full Git support, NetBeans would require access to the system and global Git configuration files and also to your private keys for signing commits. Instead, I simply run all Git commands in the Terminal outside of NetBeans.
+Note that Gradle tries to create the hidden folder even when its user home is set to an alternative location. For example, after setting the Gradle User Home to `~/snap/strictly-netbeans/common/gradle` in the panel under Tools > Options > Java > Gradle > Execution, Gradle still tries to create the default `~/.gradle` directory and fails to recover after being denied permission.
 
 ## Build
 
