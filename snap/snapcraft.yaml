@@ -43,7 +43,7 @@ description: |
   trademarks or trademarks of the Apache Software Foundation in the
   United States and/or other countries.
 
-version: '15'
+version: '16'
 license: Apache-2.0
 
 base: core18
@@ -89,13 +89,13 @@ parts:
     plugin: nil
     source: https://github.com/apache/netbeans.git
     source-type: git
-    source-branch: release150
+    source-branch: release160
     source-depth: 1
     build-packages: [ant, default-jdk-headless, unzip]
     # See this file for the branch names and commits of each release:
     # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
     build-environment:
-    - RELEASE_BRANCH: release150
+    - RELEASE_BRANCH: release160
     override-build: |
       # Avoids causing "503 Service Unavailable" errors on Launchpad
       # See: https://github.com/apache/netbeans/pull/4206
