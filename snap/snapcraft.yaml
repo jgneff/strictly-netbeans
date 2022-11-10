@@ -98,11 +98,6 @@ parts:
     build-environment:
     - RELEASE_BRANCH: release160
     override-build: |
-      # Building nb.cluster.enterprise fails with 'cluster.config=release'
-      #   Failed to parse document at 'http://www.w3.org/2001/xml.xsd'.
-      #   java.net.UnknownHostException: www.w3.org
-      # https://answers.launchpad.net/launchpad/+question/703550
-
       # Avoids causing "503 Service Unavailable" errors on Launchpad
       # https://github.com/apache/netbeans/pull/4206
       unset https_proxy
@@ -111,14 +106,12 @@ parts:
       SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
       export SOURCE_DATE_EPOCH
 
-      # Builds the full source release
-      ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH" \
-          -Dcluster.config=release -Dbuildnum=999 build-source-config
+      # Builds the source release
+      ant -quiet -Dmetabuild.branch="$RELEASE_BRANCH" -Dbuildnum=999 build-source-config
 
-      # Builds the basic binary release from the full source release
+      # Builds the binary release from the source release
       unzip -q nbbuild/build/release-src-999.zip -d build-release-temp
-      ant -quiet -f build-release-temp/build.xml \
-          -Dmetabuild.branch="$RELEASE_BRANCH" -Dcluster.config=basic
+      ant -quiet -f build-release-temp/build.xml -Dmetabuild.branch="$RELEASE_BRANCH"
       mv build-release-temp/nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
 
       # Patches the default location of the local repository
