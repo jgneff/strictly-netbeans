@@ -1,5 +1,5 @@
 # snapcraft.yaml - builds a Snap package of the Apache NetBeans IDE
-# Copyright 2021-2022 John Neffenger
+# Copyright 2021-2023 John Neffenger
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ description: |
   trademarks or trademarks of the Apache Software Foundation in the
   United States and/or other countries.
 
-version: '16'
+version: '17'
 license: Apache-2.0
 
 base: core18
@@ -90,13 +90,13 @@ parts:
     plugin: nil
     source: https://github.com/apache/netbeans.git
     source-type: git
-    source-branch: release160
+    source-branch: release170
     source-depth: 1
     build-packages: [ant, default-jdk-headless, unzip]
     # This file lists the branch names and commits of each release:
     # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
     build-environment:
-    - RELEASE_BRANCH: release160
+    - RELEASE_BRANCH: release170
     override-build: |
       # Avoids causing "503 Service Unavailable" errors on Launchpad
       # https://github.com/apache/netbeans/pull/4206
