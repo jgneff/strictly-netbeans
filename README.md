@@ -6,9 +6,9 @@ The table below provides a summary of the support for Git version control and th
 
 | Tool   | Support | Comment |
 | ------ |:-------:| ------- |
-| Git    | ✔ | Works, but uses only the local Git repository configuration file. See notes below. |
-| Ant    | ✔ | Works as expected. |
-| Maven  | ✔ | Works, but uses alternative locations for the Maven user settings file and local repository directory. See notes below. |
+| Git    | ✓ | Works, but uses only the local Git repository configuration file. See notes below. |
+| Ant    | ✓ | Works as expected. |
+| Maven  | ✓ | Works, but uses alternative locations for the Maven user settings file and local repository directory. See notes below. |
 | Gradle | ❌ | Does not work. |
 
 If you require the full use of Git or Gradle from within NetBeans, you'll need to download and install the unconfined [official release](https://netbeans.apache.org/download/) instead of the Strictly NetBeans Snap package. If, like me, you prefer to run Git in the Terminal outside of NetBeans and use only the Apache Ant and Apache Maven build tools, you should be able to use Strictly NetBeans for your software development. See the **Usage** section below for important instructions on how to avoid problems.
