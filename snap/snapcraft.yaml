@@ -43,7 +43,7 @@ description: |
   trademarks or trademarks of the Apache Software Foundation in the
   United States and/or other countries.
 
-version: '19'
+version: '20'
 license: Apache-2.0
 
 base: core18
@@ -90,13 +90,13 @@ parts:
     plugin: nil
     source: https://github.com/apache/netbeans.git
     source-type: git
-    source-branch: release190
+    source-branch: release200
     source-depth: 1
     build-packages: [ant, default-jdk-headless, unzip]
     # This file lists the branch names and commits of each release:
     # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
     build-environment:
-    - RELEASE_BRANCH: release190
+    - RELEASE_BRANCH: release200
     override-build: |
       # Avoids causing "503 Service Unavailable" errors on Launchpad
       # https://github.com/apache/netbeans/pull/4206
