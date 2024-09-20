@@ -76,10 +76,6 @@ apps:
       GIT_CONFIG_GLOBAL: /dev/null  # Not yet supported by JGit
       GIT_CONFIG_SYSTEM: /dev/null  # Not yet supported by JGit
       GIT_CONFIG_NOSYSTEM: 'true'   # Supported by Eclipse JGit
-      # X11 connection rejected because of wrong authentication.
-      # java.awt.AWTError: Can't connect to X11 window server using
-      #   'localhost:10.0' as the value of the DISPLAY variable.
-      XAUTHORITY: $SNAP_REAL_HOME/.Xauthority
 
 parts:
   dump:
