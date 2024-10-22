@@ -43,7 +43,7 @@ description: |
   trademarks or trademarks of the Apache Software Foundation in the
   United States and/or other countries.
 
-version: '23'
+version: '24'
 license: Apache-2.0
 
 base: core18
@@ -55,14 +55,14 @@ architectures:
   run-on: [amd64, arm64, armhf, i386]
 
 plugs:
-  jdk-22-1804:
+  jdk-23-1804:
     interface: content
     target: $SNAP/jdk
     default-provider: openjdk
   maven-3-1804:
     interface: content
     target: $SNAP/maven
-  jfx-22-1804:
+  jfx-23-1804:
     interface: content
     target: $SNAP/jfx
 
@@ -89,7 +89,7 @@ parts:
     plugin: nil
     source: https://github.com/apache/netbeans.git
     source-type: git
-    source-branch: release230
+    source-branch: release240
     source-depth: 1
     build-packages:
     - ant
@@ -99,7 +99,7 @@ parts:
     # This file lists the branch names and commits of each release:
     # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
     build-environment:
-    - RELEASE_BRANCH: release230
+    - RELEASE_BRANCH: release240
     override-build: |
       # Avoids causing "503 Service Unavailable" errors on Launchpad
       # https://github.com/apache/netbeans/issues/4890
