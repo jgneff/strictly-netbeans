@@ -46,36 +46,54 @@ description: |
 version: '25'
 license: Apache-2.0
 
-base: core18
+base: core24
 grade: stable
 confinement: strict
 
-architectures:
-- build-on: amd64
-  run-on: [amd64, arm64, armhf, i386]
+# This build plan works around the following issue:
+# Store upload failed: found binaries for architecture 'all'
+# https://bugs.launchpad.net/review-tools/+bug/2101851
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+  arm64:
+    build-on: [arm64]
+    build-for: [arm64]
+  armhf:
+    build-on: [armhf]
+    build-for: [armhf]
 
 plugs:
-  jdk-23-1804:
+  jdk-24-1804:
     interface: content
     target: $SNAP/jdk
-    default-provider: openjdk
-  maven-3-1804:
-    interface: content
-    target: $SNAP/maven
-  jfx-23-1804:
+  jfx-24-2204:
     interface: content
     target: $SNAP/jfx
+  maven-3-2404:
+    interface: content
+    target: $SNAP/maven
+
+lint:
+  ignore: [library]
 
 apps:
   strictly-netbeans:
     command: bin/netbeans.sh
-    extensions: [gnome-3-28]
-    plugs: [home, network, network-bind, mount-observe]
+    extensions: [gnome]
+    # Adds 'network-status' to avoid the following warning:
+    # GLib-GIO-WARNING **: 08:17:09.943: GDBus.Error:org.freedesktop.portal.Error.NotAllowed:
+    # This call is not available inside the sandbox
+    plugs: [home, network, network-bind, network-status, mount-observe]
     environment:
       # java.io.FileNotFoundException: ~/.gitconfig (Permission denied)
       GIT_CONFIG_GLOBAL: /dev/null  # Not yet supported by JGit
       GIT_CONFIG_SYSTEM: /dev/null  # Not yet supported by JGit
       GIT_CONFIG_NOSYSTEM: 'true'   # Supported by Eclipse JGit
+      # Gtk-Message: 08:17:09.745: Not loading module "atk-bridge":
+      # The functionality is provided by GTK natively. Please try to not load it.
+      GTK_MODULES: ''               # Removes 'gail:atk-bridge'
 
 parts:
   dump:
@@ -115,11 +133,11 @@ parts:
       # Builds the binary release from the source release
       unzip -q nbbuild/build/release-src-999.zip -d build-release-temp
       ant -quiet -f build-release-temp/build.xml -Dmetabuild.branch="$RELEASE_BRANCH"
-      mv build-release-temp/nbbuild/netbeans "$SNAPCRAFT_PART_INSTALL"
+      mv build-release-temp/nbbuild/netbeans "$CRAFT_PART_INSTALL"
 
       # Patches the default location of the local repository
-      cp "$SNAPCRAFT_STAGE/conf/settings-global.xml" \
-          "$SNAPCRAFT_PART_INSTALL/netbeans/java/maven/conf/settings.xml"
+      cp "$CRAFT_STAGE/conf/settings-global.xml" \
+          "$CRAFT_PART_INSTALL/netbeans/java/maven/conf/settings.xml"
     stage:
     # Excludes build files not found in the official Apache release
     - -netbeans/moduleCluster.properties
