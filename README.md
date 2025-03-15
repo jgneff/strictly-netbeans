@@ -9,7 +9,7 @@ The table below provides a summary of the support for Git version control and th
 | Git    | ✓ | Works, but uses only the local Git repository configuration file. See notes below. |
 | Ant    | ✓ | Works as expected. |
 | Maven  | ✓ | Works, but uses alternative locations for the Maven user settings file and local repository directory. See notes below. |
-| Gradle | ❌ | Does not work. |
+| Gradle | 🗙 | Does not work. |
 
 If you require the full use of Git or Gradle from within NetBeans, you'll need to download and install the unconfined [official release](https://netbeans.apache.org/download/) instead of the Strictly NetBeans Snap package. If, like me, you prefer to run Git in the Terminal outside of NetBeans and use only the Apache Ant and Apache Maven build tools, you should be able to use Strictly NetBeans for your software development. See the **Usage** section below for important instructions on how to avoid problems.
 
@@ -46,10 +46,11 @@ The Snap package is [strictly confined](https://snapcraft.io/docs/snap-confineme
 * the [desktop interfaces](https://snapcraft.io/docs/gnome-3-28-extension) to run as a graphical desktop application,
 * the [home interface](https://snapcraft.io/docs/home-interface) to read and write files under your home directory,
 * the [network interface](https://snapcraft.io/docs/network-interface) to download NetBeans plugins and Maven artifacts,
-* the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to listen on local server sockets, and
+* the [network-bind interface](https://snapcraft.io/docs/network-bind-interface) to listen on local server sockets,
+* the [network-status interface](https://snapcraft.io/docs/network-status-interface) to determine the connectivity status of the network, and
 * the optional [mount-observe interface](https://snapcraft.io/docs/mount-observe-interface) to enable Git support for the project repository.
 
-When you install Strictly NetBeans, it will automatically install the [OpenJDK Snap package](https://snapcraft.io/openjdk) and connect to it for its Java Development Kit (JDK). You can also install the OpenJDK Snap package manually with the command:
+If you also install the [OpenJDK Snap package](https://snapcraft.io/openjdk), the Strictly NetBeans Snap package will connect to it automatically for its Java Development Kit (JDK). You can install the OpenJDK Snap package with the command:
 
 ```console
 $ sudo snap install openjdk
@@ -60,20 +61,20 @@ After both packages are installed, you'll see the following interface among thei
 ```console
 $ snap connections strictly-netbeans
 Interface             Plug                           Slot                 Notes
-content[jdk-19-1804]  strictly-netbeans:jdk-19-1804  openjdk:jdk-19-1804  -
+content[jdk-24-1804]  strictly-netbeans:jdk-24-1804  openjdk:jdk-24-1804  -
 ```
 
 You can also connect them manually with the command:
 
 ```console
-$ sudo snap connect strictly-netbeans:jdk-19-1804 openjdk:jdk-19-1804
+$ sudo snap connect strictly-netbeans:jdk-24-1804 openjdk:jdk-24-1804
 ```
 
 You can use a different JDK by disconnecting the OpenJDK Snap package and setting the `JAVA_HOME` environment variable. Because the Strictly NetBeans Snap package is strictly confined, the JDK must be located under a non-hidden folder of your home directory. For example:
 
 ```console
-$ sudo snap disconnect strictly-netbeans:jdk-19-1804
-$ export JAVA_HOME=$HOME/opt/jdk-20
+$ sudo snap disconnect strictly-netbeans:jdk-24-1804
+$ export JAVA_HOME=$HOME/opt/jdk-24
 $ strictly-netbeans
 ```
 
@@ -92,19 +93,19 @@ The [Launchpad build farm](https://launchpad.net/builders) runs each build in a 
 
 ## Verify
 
-Each Strictly NetBeans package provides a software bill of materials (SBOM) and a link to its build log. This information is contained in a file called `manifest.yaml` in the directory `/snap/strictly-netbeans/current/snap`. The `image-info` section of the manifest provides a link to the package's page on Launchpad with its build status, including the complete log file from the container that ran the build. You can use this information to verify that the Strictly NetBeans Snap package installed on your system was built from source on Launchpad using only the software in [Ubuntu 18.04 LTS](https://cloud-images.ubuntu.com/bionic/current/).
+Each Strictly NetBeans package provides a software bill of materials (SBOM) and a link to its build log. This information is contained in a file called `manifest.yaml` in the directory `/snap/strictly-netbeans/current/snap`. The `image-info` section of the manifest provides a link to the package's page on Launchpad with its build status, including the complete log file from the container that ran the build. You can use this information to verify that the Strictly NetBeans Snap package installed on your system was built from source on Launchpad using only the software in [Ubuntu 24.04 LTS](https://cloud-images.ubuntu.com/noble/current/).
 
-For example, I'll demonstrate how I verify the Strictly NetBeans Snap package installed on my system at the time of this writing. The `snap info` command shows that I installed Strictly NetBeans version 15 with revision 10:
+For example, I'll demonstrate how I verify the Strictly NetBeans Snap package installed on my system at the time of this writing. The `snap info` command shows that I installed Strictly NetBeans version 25 with revision 65:
 
 ```console
 $ snap info strictly-netbeans
 ...
 channels:
-  latest/stable:    15 2022-09-15 (10) 551MB -
-  latest/candidate: ↑
+  latest/stable:    25 2025-02-22 (62) 695MB -
+  latest/candidate: 25 2025-03-15 (65) 695MB -
   latest/beta:      ↑
   latest/edge:      ↑
-installed:          15            (10) 551MB -
+installed:          25            (65) 695MB -
 ```
 
 The following command prints the build information from the manifest file:
@@ -112,27 +113,27 @@ The following command prints the build information from the manifest file:
 ```console
 $ grep -A3 image-info /snap/strictly-netbeans/current/snap/manifest.yaml
 image-info:
-  build-request-id: lp-73868090
-  build-request-timestamp: '2022-09-06T19:00:24Z'
-  build_url: https://launchpad.net/~jgneff/+snap/strictly-netbeans/+build/1872566
+  build-request-id: lp-96609099
+  build-request-timestamp: '2025-03-07T15:14:58Z'
+  build_url: https://launchpad.net/~jgneff/+snap/strictly-netbeans/+build/2746062
 ```
 
-The `build_url` in the manifest is a link to the [page on Launchpad](https://launchpad.net/~jgneff/+snap/strictly-netbeans/+build/1872566) with the package's **Build status** and **Store status**. The store status shows that Launchpad uploaded revision 10 to the Snap Store, which matches the revision installed on my system. The build status shows a link to the log file with the label *buildlog*.
+The `build_url` in the manifest is a link to the [page on Launchpad](https://launchpad.net/~jgneff/+snap/strictly-netbeans/+build/2746062) with the package's **Build status** and **Store status**. The store status shows that Launchpad uploaded revision 65 to the Snap Store, which matches the revision installed on my system. The build status shows a link to the log file with the label [buildlog](https://launchpad.net/~jgneff/+snap/strictly-netbeans/+build/2746062/+files/buildlog_snap_ubuntu_noble_amd64_strictly-netbeans_BUILDING.txt.gz).
 
-The end of the log file contains a line with the SHA512 checksum of the package just built, shown below with the checksum edited to fit on this page:
+The end of the log file contains a line with the SHA512 checksum of the package just built:
 
 ```
-Snapping...
-Snapped strictly-netbeans_15_multi.snap
-727134069ab142f0...a6b6168a7394b768  strictly-netbeans_15_multi.snap
+Creating snap package...
+Packed strictly-netbeans_25_amd64.snap
+3c483eeb690956a0fdfd528e6116d5b6a70aae0425964fa7d514e1d9a21ea8c483d44af067df9e4cf1eb8d7089cab79128385a7f7f136015942f5fdcc7bdaf2e  strictly-netbeans_25_amd64.snap
 Revoking proxy token...
 ```
 
 The command below prints the checksum of the package installed on my system:
 
 ```console
-$ sudo sha512sum /var/lib/snapd/snaps/strictly-netbeans_10.snap
-727134069ab142f0...a6b6168a7394b768  /var/lib/snapd/snaps/strictly-netbeans_10.snap
+$ sudo sha512sum /var/lib/snapd/snaps/strictly-netbeans_65.snap
+3c483eeb690956a0fdfd528e6116d5b6a70aae0425964fa7d514e1d9a21ea8c483d44af067df9e4cf1eb8d7089cab79128385a7f7f136015942f5fdcc7bdaf2e  /var/lib/snapd/snaps/strictly-netbeans_65.snap
 ```
 
 The two checksum strings are identical. Using this procedure, I verified that the Strictly NetBeans Snap package installed on my system and the Strictly NetBeans Snap package built and uploaded to the Snap Store by Launchpad are in fact the exact same package. For more information, see [Launchpad Bug #1979844](https://bugs.launchpad.net/launchpad/+bug/1979844), "Allow verifying that a snap recipe build corresponds to a store revision."
@@ -144,11 +145,12 @@ First, verify that the Strictly NetBeans Snap package is working and connected t
 ```console
 $ strictly-netbeans
 WARNING: package com.apple.eio not in java.desktop
-WARNING: A terminally deprecated method in java.lang.System has been called
-WARNING: System::setSecurityManager has been called by org.netbeans.TopSecurityManager
-  (file:/snap/strictly-netbeans/10/netbeans/platform/lib/boot.jar)
-WARNING: Please consider reporting this to the maintainers of org.netbeans.TopSecurityManager
-WARNING: System::setSecurityManager will be removed in a future release
+WARNING: package com.sun.java.swing.plaf.windows not in java.desktop
+WARNING: package com.apple.laf not in java.desktop
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (jar:file:/snap/strictly-netbeans/x4/netbeans/java/maven/lib/guava-33.2.1-jre.jar!/)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 ```
 
 You should be presented with the Apache NetBeans window. If instead you see the error message printed below, make sure that the OpenJDK Snap package is installed and connected as described previously in the **Install** section.
@@ -189,7 +191,7 @@ The Strictly NetBeans Snap package has no access to the primary user-specific "g
 java.io.FileNotFoundException: /home/john/.gitconfig (Permission denied)
 ```
 
-NetBeans fails to recover from the error, essentially disabling all of its Git support. There could be a way to make NetBeans use an alternative location for the file, but its [Eclipse JGit](https://www.eclipse.org/jgit/) library does [not yet support](https://git.eclipse.org/c/jgit/jgit.git/tree/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#n74) the environment variable `GIT_CONFIG_GLOBAL` that would make this possible.
+NetBeans fails to recover from the error, essentially disabling all of its Git support. There could be a way to make NetBeans use an alternative location for the file, but its [Eclipse JGit](https://github.com/eclipse-jgit/jgit) library does [not yet support](https://github.com/eclipse-jgit/jgit/blob/master/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java#L92) the environment variable `GIT_CONFIG_GLOBAL` that would make this possible.
 
 There is, however, a small change you can make to avoid the error. The JGit library looks for the global configuration file only in its primary location. If you move the file to its secondary location, you will hide it from JGit while still being able to use it for normal Git commands outside of NetBeans:
 
@@ -213,15 +215,15 @@ To avoid this error, connect the optional `mount-observe` plug to its core slot 
 $ sudo snap connect strictly-netbeans:mount-observe
 ```
 
-Alternatively, you can enable the permission to "Read system mount information and disk quotas" in either the Ubuntu Software or GNOME Software application.
+Alternatively, you can enable the permission to "Read system mount information and disk quotas" for the Strictly NetBeans app in your system settings.
 
 This permission lets the JGit library determine whether the repository's file system is writable. A writable file system lets JGit measure the timestamp resolution and avoid the [racy Git](https://git-scm.com/docs/racy-git) problem. JGit saves this information in its configuration file, shown in the example below:
 
 ```console
 $ cat ~/snap/strictly-netbeans/current/.config/jgit/config
-[filesystem "Snap Build|19|/dev/mapper/sda1_crypt"]
-    timestampResolution = 5498 nanoseconds
-    minRacyThreshold = 4069 microseconds
+[filesystem "Snap Build|24|/dev/mapper/sda1_crypt"]
+    timestampResolution = 4344 nanoseconds
+    minRacyThreshold = 1331 microseconds
 ```
 
 ### Ant build tool
@@ -243,7 +245,7 @@ If the [Strictly Maven Snap package](https://snapcraft.io/strictly-maven) is als
 $ sudo snap install strictly-maven
 ```
 
-To use Strictly Maven instead of the Maven release that is bundled with NetBeans, select "Browse..." under Tools > Options > Java > Maven > Execution > Maven Home to open the dialog "Select Maven Installation Location," and then open the directory:
+To use Strictly Maven instead of the Maven release bundled with NetBeans, select "Browse..." under Tools > Options > Java > Maven > Execution > Maven Home to open the dialog "Select Maven Installation Location," and then open the directory:
 
 ```
 /snap/strictly-netbeans/current/maven
