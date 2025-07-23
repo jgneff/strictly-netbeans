@@ -43,7 +43,7 @@ description: |
   trademarks or trademarks of the Apache Software Foundation in the
   United States and/or other countries.
 
-version: '26'
+version: '27'
 license: Apache-2.0
 
 base: core24
@@ -107,7 +107,7 @@ parts:
     plugin: nil
     source: https://github.com/apache/netbeans.git
     source-type: git
-    source-branch: release260
+    source-branch: release270
     source-depth: 1
     build-packages:
     - ant
@@ -117,7 +117,7 @@ parts:
     # This file lists the branch names and commits of each release:
     # https://github.com/apache/netbeans-jenkins-lib/blob/master/meta/netbeansrelease.json
     build-environment:
-    - RELEASE_BRANCH: release260
+    - RELEASE_BRANCH: release270
     override-build: |
       # Avoids causing "503 Service Unavailable" errors on Launchpad
       # https://github.com/apache/netbeans/issues/4890
