@@ -70,10 +70,10 @@ platforms:
     build-for: [armhf]
 
 plugs:
-  jdk-26-2004:
+  jdk-27-2004:
     interface: content
     target: $SNAP/jdk
-  jfx-26-2204:
+  jfx-27-2204:
     interface: content
     target: $SNAP/jfx
   maven-3-2404:
